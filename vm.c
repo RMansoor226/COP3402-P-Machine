@@ -33,9 +33,9 @@ int base(int pas[], int bp, int l) {
 }
 
 void print(int op, int l, int m, int pas[], int pc, int bp, int sp) {
-    int oldSP = sp;
     char opcode[4];
 
+    // Decode opcode string
     switch (op) {
         case 1:
             sprintf(opcode, "LIT");
@@ -104,7 +104,7 @@ void print(int op, int l, int m, int pas[], int pc, int bp, int sp) {
 
     // Print stack
     printf("   ");
-    for (int i=499; i >= sp; i--) {
+    for (int i=sp; i >= bp; i--) {
         printf(" %d", pas[i]);
     }
 
