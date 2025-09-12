@@ -32,172 +32,246 @@ int base(int pas[], int bp, int l) {
     return arbase;
 }
 
-void print(int argc, char** argv, int pas[], int pc, int bp, int sp) {
-    char l = 'L';
-    char m = 'M';
-    char PC[] = "PC";
-    char BP[] = "BP";
-    char SP[] = "SP";
-    char stack[] = "stack";
-    printf("%9c %7c %5s %4s %4s %7s\n", l, m, PC, BP, SP, stack);
-    printf("Initial values: %8d %4d %4d\n", 499, 439, 440);
-    for (int i=1; i < argc; i+=3) {
-        if (atoi(argv[i]) == '1') {
-            printf("JMP %5d %7d %4d %4d %4d", atoi(argv[i+1]), atoi(argv[i+2]), pc, bp, sp);
-        }
-        if (atoi(argv[i]) == '2') {
-            if (argv[i][2] == '0') {
-                printf("RTN %5d %7d %4d %4d %4d", atoi(argv[i+1]), atoi(argv[i+2]), pc, bp, sp);
+void print(int op, int l, int m, int pas[], int pc, int bp, int sp) {
+    int oldSP = sp;
+    char opcode[4];
+
+    switch (op) {
+        case 1:
+            sprintf(opcode, "LIT");
+            break;
+        case 2:
+            switch (m) {
+                case 0:
+                    sprintf(opcode, "RTN");
+                    break;
+                case 1:
+                    sprintf(opcode, "ADD");
+                    break;
+                case 2:
+                    sprintf(opcode, "SUB");
+                    break;
+                case 3:
+                    sprintf(opcode, "MUL");
+                    break;
+                case 4:
+                    sprintf(opcode, "DIV");
+                    break;
+                case 5:
+                    sprintf(opcode, "EQL");
+                    break;
+                case 6:
+                    sprintf(opcode, "NEQ");
+                    break;
+                case 7:
+                    sprintf(opcode, "LSS");
+                    break;
+                case 8:
+                    sprintf(opcode, "LEQ");
+                    break;
+                case 9:
+                    sprintf(opcode, "GTR");
+                    break;
+                case 10:
+                    sprintf(opcode, "GEQ");
+                    break;
             }
-            if (argv[i][2] == '1') {
-                printf("ADD %5d %7d %4d %4d %4d", atoi(argv[i+1]), atoi(argv[i+2]), pc, bp, sp);
-            }
-            if (argv[i][2] == '2') {
-                printf("SUB %5d %7d %4d %4d %4d", atoi(argv[i+1]), atoi(argv[i+2]), pc, bp, sp);
-            }
-            if (argv[i][2] == '3') {
-                printf("MUL %5d %7d %4d %4d %4d", atoi(argv[i+1]), atoi(argv[i+2]), pc, bp, sp);
-            }
-            if (argv[i][2] == '4') {
-                printf("DIV %5d %7d %4d %4d %4d", atoi(argv[i+1]), atoi(argv[i+2]), pc, bp, sp);
-            }
-            if (argv[i][2] == '5') {
-                printf("EQL %5d %7d %4d %4d %4d", atoi(argv[i+1]), atoi(argv[i+2]), pc, bp, sp);
-            }
-            if (argv[i][2] == '6') {
-                printf("NEQ %5d %7d %4d %4d %4d", atoi(argv[i+1]), atoi(argv[i+2]), pc, bp, sp);
-            }
-            if (argv[i][2] == '7') {
-                printf("LSS %5d %7d %4d %4d %4d", atoi(argv[i+1]), atoi(argv[i+2]), pc, bp, sp);
-            }
-            if (argv[i][2] == '8') {
-                printf("LEQ %5d %7d %4d %4d %4d", atoi(argv[i+1]), atoi(argv[i+2]), pc, bp, sp);
-            }
-            if (argv[i][2] == '9') {
-                printf("GTR %5d %7d %4d %4d %4d", atoi(argv[i+1]), atoi(argv[i+2]), pc, bp, sp);
-            }
-            if (argv[i][2] == '10') {
-                printf("GEQ %5d %7d %4d %4d %4d", atoi(argv[i+1]), atoi(argv[i+2]), pc, bp, sp);
-            }
-        }
-        if (atoi(argv[i]) == '3') {
-            printf("LOD %5d %7d %4d %4d %4d", atoi(argv[i+1]), atoi(argv[i+2]), pc, bp, sp);
-        }
-        if (atoi(argv[i]) == '4') {
-            printf("STO %5d %7d %4d %4d %4d", atoi(argv[i+1]), atoi(argv[i+2]), pc, bp, sp);
-        }
-        if (atoi(argv[i]) == '5') {
-            printf("CAL %5d %7d %4d %4d %4d", atoi(argv[i+1]), atoi(argv[i+2]), pc, bp, sp);
-        }
-        if (atoi(argv[i]) == '6') {
-            printf("INC %5d %7d %4d %4d %4d", atoi(argv[i+1]), atoi(argv[i+2]), pc, bp, sp);
-        }
-        if (atoi(argv[i]) == '7') {
-            printf("JMP %5d %7d %4d %4d %4d", atoi(argv[i+1]), atoi(argv[i+2]), pc, bp, sp);
-        }
-        if (atoi(argv[i]) == '8') {
-            printf("JPC %5d %7d %4d %4d %4d", atoi(argv[i+1]), atoi(argv[i+2]), pc, bp, sp);
-        }
-        if (atoi(argv[i]) == '9') {
-            printf("SYS %5d %7d %4d %4d %4d", atoi(argv[i+1]), atoi(argv[i+2]), pc, bp, sp);
-        }
+            break;
+        case 3:
+            sprintf(opcode, "LOD");
+            break;
+        case 4:
+            sprintf(opcode, "STO");
+            break;
+        case 5:
+            sprintf(opcode, "CAL");
+            break;
+        case 6:
+            sprintf(opcode, "INC");
+            break;
+        case 7:
+            sprintf(opcode, "JMP");
+            break;
+        case 8:
+            sprintf(opcode, "JPC");
+            break;
+        case 9:
+            sprintf(opcode, "SYS");
+            break;
     }
+
+    printf("%3s %3d %3d %4d %4d %4d", opcode, l, m, pc, bp, sp);
+
+    // Print stack
+    printf("   ");
+    for (int i=499; i >= sp; i--) {
+        printf(" %d", pas[i]);
+    }
+
+    printf("\n");
 }
 
 int main(int argc, char* argv[]) {
+    // Read input file
+    FILE *input = fopen(argv[1], "r");
+    if (!input) {
+        printf("Unable to open file!\n");
+        return 1;
+    }
+
+    // Initialize PAS and registers
     int pas[500] = {0};
     int pc = 499; // program counter
-    int bp = pc - (3 * argc);
-    int sp = pc - (3 * argc) + 1;
-    // Step 1: Read
-    for (int i=1; i < argc; i+=3) {
+    int bp = pc - (3 * (argc-1));
+    int sp = pc - (3 * (argc-1) + 1);
+
+    // Print header
+    printf("%9c %7c %5s %4s %4s %7s\n", 'L', 'M', "PC", "BP", "SP", "stack");
+    printf("Initial values: %8d %4d %4d\n", pc, bp, sp);
+
+    int instruct = pc;
+    int l = pc-1;
+    int m = pc-2;
+    pc = bp;
+
+    // Load instructions into PAS
+    while (fscanf(input, "%d %d %d", &instruct, &l, &m) == 3) {
+        pas[pc] = instruct;
+        pas[pc-1] = l;
+        pas[pc-2] = m;
+        pc -= 3;
+    }
+    pc = bp;
+
+    int halt = 0;
+    while (!halt) {
         // Fetch Step
-        pas[pc] = atoi(argv[i]); // IR.OP <-- PAS[PC]
-        pas[pc-1] = atoi(argv[i+1]); // IR.L <-- PAS[PC-1]
-        pas[pc-2] = atoi(argv[i+2]); // IR.M <-- PAS[PC-2]
+        int op = pas[pc];
+        l = pas[pc-1];
+        m = pas[pc-2];
         pc -= 3;
         // Decode Step
-        // LIT (Literal Push)
-        if (pc == 1) {
-            sp++;
-            pas[sp] = pas[pc-2];
+        switch (pas[pc]) {
+            // LIT (Literal Push)
+            case 1:
+                sp--;
+                pas[sp] = pas[pc-2];
+                break;
+            // OPR (Operation Code)
+            case 2:
+                switch (pas[pc-2]) {
+                    // RTN (Return)
+                    case 0:
+                        sp = bp + 1;
+                        bp = pas[sp-2];
+                        pc = pas[sp-3];
+                        break;
+                    // ADD
+                    case 1:
+                        pas[sp+1] = pas[sp+1] + pas[sp];
+                        sp++;
+                        break;
+                    // SUB
+                    case 2:
+                        pas[sp+1] = pas[sp+1] - pas[sp];
+                        sp++;
+                        break;
+                    // MUL
+                    case 3:
+                        pas[sp+1] = pas[sp+1] * pas[sp];
+                        sp++;
+                        break;
+                    // DIV
+                    case 4:
+                        pas[sp+1] = pas[sp+1] / pas[sp];
+                        sp++;
+                        break;
+                    // EQL
+                    case 5:
+                        pas[sp+1] = (pas[sp+1] == pas[sp]) ? 1 : 0;
+                        sp++;
+                        break;
+                    // NEQ
+                    case 6:
+                        pas[sp+1] = (pas[sp+1] != pas[sp]) ? 1 : 0;
+                        sp++;
+                        break;
+                    // LSS
+                    case 7:
+                        pas[sp+1] = (pas[sp+1] < pas[sp]) ? 1 : 0;
+                        sp++;
+                        break;
+                    // LEQ
+                    case 8:
+                        pas[sp+1] = (pas[sp+1] <= pas[sp]) ? 1 : 0;
+                        sp++;
+                        break;
+                    // GTR
+                    case 9:
+                        pas[sp+1] = (pas[sp+1] > pas[sp]) ? 1 : 0;
+                        sp++;
+                        break;
+                    // GEQ
+                    case 10:
+                        pas[sp+1] = (pas[sp+1] >= pas[sp]) ? 1 : 0;
+                        sp++;
+                        break;
+                }
+                break;
+                // LOD (Load)
+                case 3:
+                    sp--;
+                    pas[sp] = pas[base(pas, bp, pas[pc-1]) - pas[pc-2]];
+                    break;
+                // STO (Store)
+                case 4:
+                    pas[base(pas, bp, pas[pc-1]) - pas[pc-2]] = pas[sp];
+                    sp++;
+                    break;
+                // CAL (Call Procedure)
+                case 5:
+                    pas[sp-1] = base(pas, bp, pas[pc-1]);
+                    pas[sp-2] = bp;
+                    pas[sp-3] = pc;
+                    bp = sp - 1;
+                    pc = pas[pc-2];
+                    break;
+                // INC (Increment SP)
+                case 6:
+                    sp -= pas[pc-2];
+                    break;
+                // JMP (Jump)
+                case 7:
+                    pc = pas[pc-2];
+                    break;
+                // JPC (Jump Conditional)
+                case 8:
+                    if (pas[sp] == 0)
+                        pc = pas[pc-2];
+                    sp++;
+                    break;
+                // SYS (Output, Input, Halt)
+                case 9:
+                    switch (pas[pc-2]) {
+                        // Output
+                        case 1:
+                            printf("Output result is: %d\n", pas[sp]);
+                            sp++;
+                            break;
+                        // Input
+                        case 2:
+                            sp--;
+                            printf("Please Enter an Integer: ");
+                            scanf("%d", &pas[sp]);
+                            break;
+                        // Halt
+                        case 3:
+                            halt = 1;
+                            break;
+                    }
+                    break;
         }
-        // OPR (Operation Code)
-        if (pc == 2) {
-            // RTN (Return)
-            if (pas[pc-2] == 0) {
-                sp = bp + 1;
-                bp = pas[sp-2];
-                pc = pas[sp-3];
-            }
-            // ADD
-            if (pas[pc-2] == 1) {
-                pas[sp+1] = pas[sp+1] + pas[sp];
-                sp++;
-            }
-            // SUB
-            if (pas[pc-2] == 2) {
-                pas[sp+1] = pas[sp+1] - pas[sp];
-                sp++;
-            }
-            // MUL
-            if (pas[pc-2] == 3) {
-                pas[sp+1] = pas[sp+1] * pas[sp];
-                sp++;
-            }
-            // DIV
-            if (pas[pc-2] == 4) {
-                pas[sp+1] = pas[sp+1] / pas[sp];
-                sp++;
-            }
-            // EQL
-            if (pas[pc-2] == 5) {
-                pas[sp+1] = (pas[sp+1] == pas[sp]) ? 1 : 0;
-                sp++;
-            }
-            // NEQ
-            if (pas[pc-2] == 6) {
-                pas[sp+1] = (pas[sp+1] != pas[sp]) ? 1 : 0;
-                sp++;
-            }
-            // LSS
-            if (pas[pc-2] == 7) {
-                pas[sp+1] = (pas[sp+1] < pas[sp]) ? 1 : 0;
-                sp++;
-            }
-            // LEQ
-            if (pas[pc-2] == 8) {
-                pas[sp+1] = (pas[sp+1] <= pas[sp]) ? 1 : 0;
-                sp++;
-            }
-            // GTR
-            if (pas[pc-2] == 9) {
-                pas[sp+1] = (pas[sp+1] > pas[sp]) ? 1 : 0;
-                sp++;
-            }
-            // GEQ
-            if (pas[pc-2] == 10) {
-                pas[sp+1] = (pas[sp+1] >= pas[sp]) ? 1 : 0;
-                sp++;
-            }
-        }
-        // LOD (Load)
-        if (pc == 3) {
-            sp--;
-            pas[sp] = pas[base(pas, bp, pas[pc-1]) - pas[pc-2]];
-        }
-        // STO (Store)
-        if (pc == 4) {
-            pas[base(pas, bp, pas[pc-1]) - pas[pc-2]] = pas[sp];
-            sp++;
-        }
-        // CAL (Call Procedure)
-        // INC (Increment SP)
-        // JMP (Jump)
-        // JPC (Jump Conditional)
-        // SYS (Output, Input, Halt)
-
+        print(op, l, m, pas, pc, bp, sp);
     }
-    print(argc, argv, pas, pc, bp, sp);
     return 0;
 }
