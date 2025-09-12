@@ -100,7 +100,7 @@ void print(int op, int l, int m, int pas[], int pc, int bp, int sp) {
             break;
     }
 
-    printf("%3s %3d %3d %4d %4d %4d", opcode, l, m, pc, bp, sp);
+    printf("%3s %5d %7d %4d %5d %5d", opcode, l, m, pc, bp, sp);
 
     // Print stack
     printf("   ");
@@ -122,8 +122,8 @@ int main(int argc, char* argv[]) {
     // Initialize PAS and registers
     int pas[500] = {0};
     int pc = 499; // program counter
-    int bp = pc - (3 * (argc-1));
-    int sp = pc - (3 * (argc-1) + 1);
+    int bp = pc - (argc-1);
+    int sp = pc - argc;
 
     // Print header
     printf("%9c %7c %5s %4s %4s %7s\n", 'L', 'M', "PC", "BP", "SP", "stack");
@@ -151,19 +151,19 @@ int main(int argc, char* argv[]) {
         m = pas[pc-2];
         pc -= 3;
         // Decode Step
-        switch (pas[pc]) {
+        switch (op) {
             // LIT (Literal Push)
             case 1:
                 sp--;
-                pas[sp] = pas[pc-2];
+                pas[sp] = pas[m];
                 break;
             // OPR (Operation Code)
             case 2:
-                switch (pas[pc-2]) {
+                switch (m) {
                     // RTN (Return)
                     case 0:
                         sp = bp + 1;
-                        bp = pas[sp-2];
+                        bp = pas[m];
                         pc = pas[sp-3];
                         break;
                     // ADD
