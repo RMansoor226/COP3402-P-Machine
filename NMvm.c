@@ -238,7 +238,7 @@ int main(int argc, char* argv[]) {
                 // LOD (Load)
                 case 3:
                     sp--;
-                    pas[sp] = pas[base(pas, bp, l) + m];
+                    pas[sp] = pas[base(pas, bp, l) - m];
                     break;
                 // STO (Store)
                 case 4:
