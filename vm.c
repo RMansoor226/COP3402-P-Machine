@@ -26,7 +26,7 @@ Due Date : Friday , September 12 th , 2025
 #define STACK_SIZE 500
 #define MAX_AR 100
 
-int base(int pas[], int bp, int l) {
+int base(int pas[],int bp, int l) {
     int arbase = bp; // activation record base
     while (l > 0) {
         arbase = pas[arbase]; // static link (SL) is always at offset 1
@@ -174,7 +174,7 @@ int main(int argc, char* argv[]) {
                 sp--;
                 pas[sp] = m;
                 break;
-            // OPR (Operation Code)
+                // OPR (Operation Code)
             case 2:
                 switch (m) {
                     // RTN (Return)
@@ -183,52 +183,52 @@ int main(int argc, char* argv[]) {
                         bp = pas[sp-2];
                         pc = pas[sp-3];
                         break;
-                    // ADD
+                        // ADD
                     case 1:
                         pas[sp+1] += pas[sp];
                         sp++;
                         break;
-                    // SUB
+                        // SUB
                     case 2:
                         pas[sp+1] -= pas[sp];
                         sp++;
                         break;
-                    // MUL
+                        // MUL
                     case 3:
                         pas[sp+1] *= pas[sp];
                         sp++;
                         break;
-                    // DIV
+                        // DIV
                     case 4:
                         pas[sp+1] /= pas[sp];
                         sp++;
                         break;
-                    // EQL
+                        // EQL
                     case 5:
                         pas[sp+1] = (pas[sp+1] == pas[sp]) ? 1 : 0;
                         sp++;
                         break;
-                    // NEQ
+                        // NEQ
                     case 6:
                         pas[sp+1] = (pas[sp+1] != pas[sp]) ? 1 : 0;
                         sp++;
                         break;
-                    // LSS
+                        // LSS
                     case 7:
                         pas[sp+1] = (pas[sp+1] < pas[sp]) ? 1 : 0;
                         sp++;
                         break;
-                    // LEQ
+                        // LEQ
                     case 8:
                         pas[sp+1] = (pas[sp+1] <= pas[sp]) ? 1 : 0;
                         sp++;
                         break;
-                    // GTR
+                        // GTR
                     case 9:
                         pas[sp+1] = (pas[sp+1] > pas[sp]) ? 1 : 0;
                         sp++;
                         break;
-                    // GEQ
+                        // GEQ
                     case 10:
                         pas[sp+1] = (pas[sp+1] >= pas[sp]) ? 1 : 0;
                         sp++;
@@ -236,57 +236,57 @@ int main(int argc, char* argv[]) {
                 }
                 break;
                 // LOD (Load)
-                case 3:
-                    sp--;
-                    pas[sp] = pas[base(pas, bp, l) + m];
-                    break;
+            case 3:
+                sp--;
+                pas[sp] = pas[base(pas, bp, l) - m];
+                break;
                 // STO (Store)
-                case 4:
-                    pas[base(pas, bp, l) + m] = pas[sp];
-                    sp++;
-                    break;
+            case 4:
+                pas[base(pas, bp, l) - m] = pas[sp];
+                sp++;
+                break;
                 // CAL (Call Procedure)
-                case 5:
-                    pas[sp-1] = base(pas, bp, l);
-                    pas[sp-2] = bp;
-                    pas[sp-3] = pc;
-                    bp = sp - 1;
-                    pc = (STACK_SIZE - 1) - m;
-                    break;
+            case 5:
+                pas[sp-1] = base(pas, bp, l);
+                pas[sp-2] = bp;
+                pas[sp-3] = pc;
+                bp = sp - 1;
+                pc = (STACK_SIZE - 1) - m;
+                break;
                 // INC (Increment SP)
-                case 6:
-                    sp -= m;
-                    break;
+            case 6:
+                sp -= m;
+                break;
                 // JMP (Jump)
-                case 7:
-                    pc = (STACK_SIZE - 1) - m;
-                    break;
+            case 7:
+                pc = (STACK_SIZE - 1) - m;
+                break;
                 // JPC (Jump Conditional)
-                case 8:
-                    if (pas[sp] == 0)
-                        pc = (STACK_SIZE - 1) - m;
-                    sp++;
-                    break;
+            case 8:
+                if (pas[sp] == 0)
+                    pc = (STACK_SIZE - 1) - m;
+                sp++;
+                break;
                 // SYS (Output, Input, Halt)
-                case 9:
-                    switch (m) {
-                        // Output
-                        case 1:
-                            printf("Output result is: %d\n", pas[sp]);
-                            sp++;
-                            break;
+            case 9:
+                switch (m) {
+                    // Output
+                    case 1:
+                        printf("Output result is: %d\n", pas[sp]);
+                        sp++;
+                        break;
                         // Input
-                        case 2:
-                            sp--;
-                            printf("Please Enter an Integer: ");
-                            scanf("%d", &pas[sp]);
-                            break;
+                    case 2:
+                        sp--;
+                        printf("Please Enter an Integer: ");
+                        scanf("%d", &pas[sp]);
+                        break;
                         // Halt
-                        case 3:
-                            halt = 1;
-                            break;
-                    }
-                    break;
+                    case 3:
+                        halt = 1;
+                        break;
+                }
+                break;
         }
         print(op, l, m, pas, pc, bp, sp, instructionIndex);
     }
