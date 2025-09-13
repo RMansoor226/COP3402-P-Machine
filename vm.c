@@ -23,6 +23,9 @@ Due Date : Friday , September 12 th , 2025
 #include <stdio.h>
 #include <stdlib.h>
 
+#define STACK_SIZE 500
+#define MAX_AR 100
+
 int base(int pas[], int bp, int l) {
     int arbase = bp; // activation record base
     while (l > 0) {
@@ -32,8 +35,8 @@ int base(int pas[], int bp, int l) {
     return arbase;
 }
 
-void print(int op, int l, int m, int pas[], int pc, int bp, int sp) {
-    char opcode[4];
+void print(int op, int l, int m, int pas[], int pc, int bp, int sp, int instructionIndex) {
+    char opcode[5] = "    ";
 
     // Decode opcode string
     switch (op) {
@@ -97,17 +100,27 @@ void print(int op, int l, int m, int pas[], int pc, int bp, int sp) {
             break;
         case 9:
             sprintf(opcode, "SYS");
-            break;
     }
 
-    printf("%3s %5d %7d %4d %5d %5d", opcode, l, m, pc, bp, sp);
+    printf("%3s %5d %8d %5d %4d %4d   ", opcode, l, m, pc, bp, sp);
 
-    // Print stack
-    printf("   ");
-    for (int i=sp; i >= bp; i--) {
-        printf(" %d", pas[i]);
+    int currBP = bp;
+    int nextBP;
+    int curr = sp;
+
+    while (curr <= instructionIndex) {
+        if (curr == currBP) {
+            if (curr != sp)
+                printf("| ");
+            nextBP = pas[currBP];
+        }
+        printf(" %d", pas[curr]);
+        curr++;
+
+        if (curr == nextBP && nextBP != 0) {
+            currBP = nextBP;
+        }
     }
-
     printf("\n");
 }
 
@@ -119,43 +132,44 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    // Initialize PAS and registers
-    int pas[500] = {0};
-    int pc = 499; // program counter
-    int bp = pc - (argc-1);
-    int sp = pc - argc;
+    // Initalize PAS and instruction argument variables
+    int pas[STACK_SIZE] = {0};
+    int op, l, m;
+    int instructionIndex = STACK_SIZE - 1;
+    int instructionCount = 0;
+
+    // Load instructions into PAS
+    while (fscanf(input, "%d %d %d", &op, &l, &m) == 3) {
+        pas[instructionIndex] = op;
+        pas[instructionIndex-1] = l;
+        pas[instructionIndex-2] = m;
+        instructionIndex -= 3;
+        instructionCount++;
+    }
+    fclose(input);
+
+    int pc = STACK_SIZE-1; // program counter
+    int sp = STACK_SIZE - (instructionCount * 3);
+    int bp = sp - 1;
 
     // Print header
     printf("%9c %7c %5s %4s %4s %7s\n", 'L', 'M', "PC", "BP", "SP", "stack");
     printf("Initial values: %8d %4d %4d\n", pc, bp, sp);
 
-    int instruct = pc;
-    int l = pc-1;
-    int m = pc-2;
-    pc = bp;
-
-    // Load instructions into PAS
-    while (fscanf(input, "%d %d %d", &instruct, &l, &m) == 3) {
-        pas[pc] = instruct;
-        pas[pc-1] = l;
-        pas[pc-2] = m;
-        pc -= 3;
-    }
-    pc = bp;
-
     int halt = 0;
     while (!halt) {
         // Fetch Step
-        int op = pas[pc];
+        op = pas[pc];
         l = pas[pc-1];
         m = pas[pc-2];
         pc -= 3;
+
         // Decode Step
         switch (op) {
             // LIT (Literal Push)
             case 1:
                 sp--;
-                pas[sp] = pas[m];
+                pas[sp] = m;
                 break;
             // OPR (Operation Code)
             case 2:
@@ -163,57 +177,57 @@ int main(int argc, char* argv[]) {
                     // RTN (Return)
                     case 0:
                         sp = bp + 1;
-                        bp = pas[m];
+                        bp = pas[sp-2];
                         pc = pas[sp-3];
                         break;
                     // ADD
                     case 1:
-                        pas[sp+1] = pas[sp+1] + pas[sp];
+                        pas[sp] += pas[sp+1];
                         sp++;
                         break;
                     // SUB
                     case 2:
-                        pas[sp+1] = pas[sp+1] - pas[sp];
+                        pas[sp] -= pas[sp+1];
                         sp++;
                         break;
                     // MUL
                     case 3:
-                        pas[sp+1] = pas[sp+1] * pas[sp];
+                        pas[sp] *= pas[sp+1];
                         sp++;
                         break;
                     // DIV
                     case 4:
-                        pas[sp+1] = pas[sp+1] / pas[sp];
+                        pas[sp] /= pas[sp+1];
                         sp++;
                         break;
                     // EQL
                     case 5:
-                        pas[sp+1] = (pas[sp+1] == pas[sp]) ? 1 : 0;
+                        pas[sp] = (pas[sp] == pas[sp+1]) ? 1 : 0;
                         sp++;
                         break;
                     // NEQ
                     case 6:
-                        pas[sp+1] = (pas[sp+1] != pas[sp]) ? 1 : 0;
+                        pas[sp] = (pas[sp] != pas[sp+1]) ? 1 : 0;
                         sp++;
                         break;
                     // LSS
                     case 7:
-                        pas[sp+1] = (pas[sp+1] < pas[sp]) ? 1 : 0;
+                        pas[sp] = (pas[sp] < pas[sp+1]) ? 1 : 0;
                         sp++;
                         break;
                     // LEQ
                     case 8:
-                        pas[sp+1] = (pas[sp+1] <= pas[sp]) ? 1 : 0;
+                        pas[sp] = (pas[sp] <= pas[sp+1]) ? 1 : 0;
                         sp++;
                         break;
                     // GTR
                     case 9:
-                        pas[sp+1] = (pas[sp+1] > pas[sp]) ? 1 : 0;
+                        pas[sp] = (pas[sp] > pas[sp+1]) ? 1 : 0;
                         sp++;
                         break;
                     // GEQ
                     case 10:
-                        pas[sp+1] = (pas[sp+1] >= pas[sp]) ? 1 : 0;
+                        pas[sp] = (pas[sp] >= pas[sp+1]) ? 1 : 0;
                         sp++;
                         break;
                 }
@@ -221,38 +235,38 @@ int main(int argc, char* argv[]) {
                 // LOD (Load)
                 case 3:
                     sp--;
-                    pas[sp] = pas[base(pas, bp, pas[pc-1]) - pas[pc-2]];
+                    pas[sp] = pas[base(pas, bp, l) + m];
                     break;
                 // STO (Store)
                 case 4:
-                    pas[base(pas, bp, pas[pc-1]) - pas[pc-2]] = pas[sp];
+                    pas[base(pas, bp, l) + m] = pas[sp];
                     sp++;
                     break;
                 // CAL (Call Procedure)
                 case 5:
-                    pas[sp-1] = base(pas, bp, pas[pc-1]);
+                    pas[sp-1] = base(pas, bp, l);
                     pas[sp-2] = bp;
                     pas[sp-3] = pc;
                     bp = sp - 1;
-                    pc = pas[pc-2];
+                    pc = (STACK_SIZE - 1) - m;
                     break;
                 // INC (Increment SP)
                 case 6:
-                    sp -= pas[pc-2];
+                    sp -= m;
                     break;
                 // JMP (Jump)
                 case 7:
-                    pc = pas[pc-2];
+                    pc = (STACK_SIZE - 1) - m;
                     break;
                 // JPC (Jump Conditional)
                 case 8:
                     if (pas[sp] == 0)
-                        pc = pas[pc-2];
+                        pc = (STACK_SIZE - 1) - m;
                     sp++;
                     break;
                 // SYS (Output, Input, Halt)
                 case 9:
-                    switch (pas[pc-2]) {
+                    switch (m) {
                         // Output
                         case 1:
                             printf("Output result is: %d\n", pas[sp]);
@@ -271,7 +285,7 @@ int main(int argc, char* argv[]) {
                     }
                     break;
         }
-        print(op, l, m, pas, pc, bp, sp);
+        print(op, l, m, pas, pc, bp, sp, instructionIndex);
     }
     return 0;
 }
