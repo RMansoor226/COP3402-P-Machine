@@ -185,52 +185,52 @@ int main(int argc, char* argv[]) {
                         break;
                     // ADD
                     case 1:
-                        pas[sp] += pas[sp+1];
+                        pas[sp+1] += pas[sp];
                         sp++;
                         break;
                     // SUB
                     case 2:
-                        pas[sp] -= pas[sp+1];
+                        pas[sp+1] -= pas[sp];
                         sp++;
                         break;
                     // MUL
                     case 3:
-                        pas[sp] *= pas[sp+1];
+                        pas[sp+1] *= pas[sp];
                         sp++;
                         break;
                     // DIV
                     case 4:
-                        pas[sp] /= pas[sp+1];
+                        pas[sp+1] /= pas[sp];
                         sp++;
                         break;
                     // EQL
                     case 5:
-                        pas[sp] = (pas[sp] == pas[sp+1]) ? 1 : 0;
+                        pas[sp+1] = (pas[sp+1] == pas[sp]) ? 1 : 0;
                         sp++;
                         break;
                     // NEQ
                     case 6:
-                        pas[sp] = (pas[sp] != pas[sp+1]) ? 1 : 0;
+                        pas[sp+1] = (pas[sp+1] != pas[sp]) ? 1 : 0;
                         sp++;
                         break;
                     // LSS
                     case 7:
-                        pas[sp] = (pas[sp] < pas[sp+1]) ? 1 : 0;
+                        pas[sp+1] = (pas[sp+1] < pas[sp]) ? 1 : 0;
                         sp++;
                         break;
                     // LEQ
                     case 8:
-                        pas[sp] = (pas[sp] <= pas[sp+1]) ? 1 : 0;
+                        pas[sp+1] = (pas[sp+1] <= pas[sp]) ? 1 : 0;
                         sp++;
                         break;
                     // GTR
                     case 9:
-                        pas[sp] = (pas[sp] > pas[sp+1]) ? 1 : 0;
+                        pas[sp+1] = (pas[sp+1] > pas[sp]) ? 1 : 0;
                         sp++;
                         break;
                     // GEQ
                     case 10:
-                        pas[sp] = (pas[sp] >= pas[sp+1]) ? 1 : 0;
+                        pas[sp+1] = (pas[sp+1] >= pas[sp]) ? 1 : 0;
                         sp++;
                         break;
                 }
