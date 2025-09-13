@@ -104,23 +104,10 @@ void print(int op, int l, int m, int pas[], int pc, int bp, int sp, int instruct
 
     printf("%3s %5d %8d %5d %4d %4d   ", opcode, l, m, pc, bp, sp);
 
-    int arBases[MAX_AR];
-    int count = 0;
 
-// Collect AR bases starting from current BP
-    int currBP = bp;
-    while (currBP > instructionIndex && count < MAX_AR) {
-        arBases[count++] = currBP;
-        currBP = pas[currBP]; // follow static link
-    }
-
-    int arBP = bp;
     for (int i = instructionIndex; i >= sp; i--) {
-        for(int j = 0; j < count; j++) {
-            if(i == arBases[j] && i != sp) {
-                printf(" |");
-                break;
-            }
+        if (i == bp && i != instructionIndex) {
+            printf(" |");
         }
         printf(" %d", pas[i]);
     }
